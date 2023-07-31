@@ -1,0 +1,28 @@
+int main()
+{
+  using namespace std;
+  int v = 1;
+  Mtx_multiply variants[] =
+  {
+    multiply_v1, multiply_v2,
+    multiply_v3,
+  #ifdef USE_ASSEMBLY_VARIANTS
+    multiply_v4
+  #endif
+  };
+
+  for (auto variant : variants)
+    cout << v++ << ") " << test_multiply(variant)
+    #if defined(DEBUG) || defined(_DEBUG)
+         << "\n104 x 104 " << test_speed(variant, 104, 104, 104)
+    #else
+         << "\n36 x 36 " << test_speed(variant, 36, 36, 36, 200000)     // 32kb in L1
+         << "\n104 x 104 " << test_speed(variant, 104, 104, 104, 1000)  // 256kb in L2
+         << "\n208 x 208 " << test_speed(variant, 208, 208, 208, 200)   // 1Mb in L3
+         << "\n416 x 416 " << test_speed(variant, 416, 416, 416, 40)    // 4Mb in L3
+         << "\n590 x 590 " << test_speed(variant, 590, 590, 590, 20)    // 8Mb in L3
+         << "\n3k x 1k " << test_speed(variant, 3000, 1000, 3000, 5)
+         << "\n1k x 3k " << test_speed(variant, 1000, 3000, 1000, 5)
+         << "\n2k x 2k " << test_speed(variant, 2000, 2000, 2000, 5)
+    #endif
+         << endl;
